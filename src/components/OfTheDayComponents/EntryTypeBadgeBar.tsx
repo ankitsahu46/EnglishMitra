@@ -1,7 +1,7 @@
 import React from "react";
 
-const OfTheDayBar = ({ type }: { type: string }) => {
-  const text = type === "word" ? "Word of the day" : type === "phrasalVerb" ? "Phrase of the day" : "Idiom of the day";
+const EntryTypeBadgeBar = ({ type }: { type: string }) => {
+  const text = type === "word" ? "Word of the day" : type === "phrasalVerb" ? "Phrasal verb of the day" : "Idiom of the day";
   
   return (
     <div className="w-full flex justify-start">
@@ -12,4 +12,4 @@ const OfTheDayBar = ({ type }: { type: string }) => {
   );
 };
 
-export default OfTheDayBar;
+export default EntryTypeBadgeBar;

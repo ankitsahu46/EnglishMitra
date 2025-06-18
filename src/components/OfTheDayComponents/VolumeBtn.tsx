@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useCallback, useRef, useState } from "react";
-import IconContainer from "./IconContainer";
 import { Volume, Volume1, Volume2 } from "lucide-react";
+import IconContainer from "./IconContainer";
 
 const VOLUME_ICONS = [
   <Volume key="volume-0" className="stroke-[#00d9a9] transition-all" />,
@@ -34,3 +34,16 @@ const VolumeBtn = ({ audioUrl }: { audioUrl: string | null }) => {
 };
 
 export default VolumeBtn;
+
+
+
+//client wrapper for VolumeBtn
+
+// "use client";
+// import VolumeBtn from "./VolumeBtn";
+
+// const VolumeBtnClient = ({ audioUrl }: { audioUrl: string | null }) => (
+//   <VolumeBtn audioUrl={audioUrl} />
+// );
+
+// export default VolumeBtnClient;

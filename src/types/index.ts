@@ -1,3 +1,5 @@
+import { Idiom, PhrasalVerb } from "@/models";
+
 export interface GoBackBtnProps {
   route?: string;
   className?: string;
@@ -186,6 +188,7 @@ interface VisualExample {
 type UsageNote = DefinitionType[]; 
 
 export type EntryType = "phrasalVerb" | "idiom";
+export type ModelType = typeof Idiom | typeof PhrasalVerb;
 
 export interface EntryContent {
   text: string;
@@ -195,3 +198,9 @@ export interface EntryContent {
   example: string;
   senseLabel: string[] | string | null;
 }
+
+export interface FetchEntryDataOptions {
+  entry: string;
+  type: EntryType;
+  model: ModelType;
+};

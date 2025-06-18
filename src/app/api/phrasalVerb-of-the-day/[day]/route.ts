@@ -12,8 +12,9 @@ export async function GET(_request: Request, { params }: { params: { day: string
       model: PhrasalVerb,
     });
 
-    if (result.error) {
-      return Response.json({ message: result.error }, { status: result.status });
+    if (!result || !result.data) {
+      const errorMessage = "error" in result ? result.error : "No data found";
+      return Response.json({ message: errorMessage }, { status: result.status });
     }
     return Response.json({ data: result.data }, { status: result.status });
   } catch (error) {
@@ -26,6 +27,7 @@ export async function GET(_request: Request, { params }: { params: { day: string
 }
 
 
+export const runtime = "nodejs";
 
 
 

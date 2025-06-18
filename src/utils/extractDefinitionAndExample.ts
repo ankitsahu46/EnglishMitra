@@ -31,6 +31,7 @@ export const extractDefinitionAndExample = async (
   Part of speech: ${partOfSpeech}`;
 
     example = await generateAIExample(prompt);
+   
   }
   return { definition, example };
 };

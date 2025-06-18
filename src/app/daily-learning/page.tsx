@@ -1,9 +1,10 @@
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
-import OfTheDayComponent from "./_components/OfTheDayCmpt";
 import { fetchData } from "@/utils";
+import OfTheDayComponent from "@/components/OfTheDayComponents/OfTheDayCmpt";
+
 
 const Page = async () => {
-  const day = 15;
+  const day = 19;
   const wordOfTheDayData = await fetchData(
     `${process.env.NEXT_PUBLIC_API_URL}/word-of-the-day/${day}`
   );

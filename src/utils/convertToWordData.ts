@@ -1,6 +1,6 @@
 import { RawWordData, WordSchemaFormat } from "@/types";
 
-function convertToWordSchemaFormat(data: RawWordData): WordSchemaFormat {
+export const convertToWordSchemaFormat = (data: RawWordData): WordSchemaFormat =>{
   let audio = '';
   let phonetic = data.phonetic || '';
 
@@ -29,4 +29,3 @@ function convertToWordSchemaFormat(data: RawWordData): WordSchemaFormat {
   };
 }
 
-export default convertToWordSchemaFormat;

@@ -1,87 +1,17 @@
-import { CohereClient } from "cohere-ai";
-
-const cohere = new CohereClient({
-  token: process.env.COHERE_API_KEY!,
-});
+import { generateFromAI } from "@/utils";
 
 export const generateAIExample = async (prompt: string) => {
-  if (!prompt) return null;
+  let message = await generateFromAI(prompt);
+
+  if (!message) return null;
+  message = message.replace(/^```json|^```|```$/gim, "").trim(); //for cohere
 
   try {
-    const response = await cohere.generate({
-      model: "command-r-plus",
-      prompt,
-      temperature: 0.5,
-      maxTokens: 150,
-    });
-
-    let message = response.generations?.[0]?.text.trim();
-    if (!message) {
-      console.warn("Cohere returned no generations.");
-      return null;
-    }
-    
-    message = message.replace(/^```json|^```|```$/gim, "").trim();
-
-    try {
-      const parsed = JSON.parse(message);
-      return parsed?.example ?? null;
-    } catch (error) {
-      console.error("Parse error:", error, "Rew message: ", message);
-      return null;
-    }
+    // const parsed = JSON.parse(message || "{}");
+    const parsed = JSON.parse(message);
+    return parsed?.example ?? null;
   } catch (error) {
-    console.error("Error generating examples", error);
+    console.error("Parse error:", error, "Rew message: ", message);
     return null;
   }
 };
-
-
-
-
-
-
-
-
-// import OpenAI from 'openai';
-
-// const openai = new OpenAI({
-//   apiKey: process.env.OPENAI_API_KEY,
-// });
-
-// export const generateAIExample = async (prompt: string) => {
-//   if (!prompt) return null;
-
-//   try {
-//     const response = await openai.chat.completions.create({
-//       model: 'gpt-3.5-turbo',
-//       messages: [
-//         {
-//           role: 'user',
-//           content: prompt,
-//         },
-//       ],
-//       temperature: 0.5,
-//     });
-
-//     const message = response.choices?.[0]?.message?.content;
-//     console.log("open ai message: ", message);
-
-//     let parse;
-//     try {
-//       parse = JSON.parse(message || "{}");
-
-//       if (parse?.example) {
-//         return parse.example;
-//       }
-//     } catch (error) {
-//       console.error("Parse error:", error);
-//       return null;
-//     }
-//   } catch (error) {
-//     console.error("Error generating examples", error);
-//     return null;
-//   }
-// };
-
-

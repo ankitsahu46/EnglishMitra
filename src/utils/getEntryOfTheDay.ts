@@ -1,9 +1,7 @@
-import { OfTheDayList, Idiom, PhrasalVerb } from "@/models";
-import { convertToEntrySchemaFormat, generateAudio, validateDayParam } from "@/utils";
+import { OfTheDayList } from "@/models";
+import { fetchEntryData, validateDayParam } from "@/utils";
 import connectDB from "@/lib/connectDB";
-
-type EntryType = "idiom" | "phrasalVerb";
-type ModelType = typeof Idiom | typeof PhrasalVerb;
+import { EntryType, ModelType } from "@/types";
 
 interface GetEntryOptions {
   type: EntryType;
@@ -44,37 +42,103 @@ export async function getEntryOfTheDay({
   }
 
   // 3. Fetch from dictionary API
-  const apiUrl = `https://dictionaryapi.com/api/v3/references/learners/json/${encodeURIComponent(
-    entry
-  )}?key=${process.env.DICTIONARY_API_KEY_PV}`;
-  const apiRes = await fetch(apiUrl);
-
-  if (!apiRes.ok) {
-    return { status: apiRes.status, error: "Dictionary API failed!" };
-  }
-
-  const apiData = await apiRes.json();
-  const formatted = await convertToEntrySchemaFormat(apiData, entry, type);
-  
-  if (!formatted) {
-    return { status: 500, error: "Failed to format entry data" };
-  }
-  console.log("Entry dictionary data formatted", formatted);
-  
-  // 4. Generate audio
-  try {
-    formatted.audio = (await generateAudio(entry, type)) || null;
-  } catch (err) {
-    console.error("Failed to generate audio:", err);
-  }
-  
-  // 5. Save to DB
-  try {
-    await model.create(formatted);
-    console.log("Entry dictionary data formatted after caching", formatted);
-  } catch (err) {
-    console.error("Failed to save entry to the database:", err);
-  }
-
-  return { status: 200, data: formatted };
+  const result = await fetchEntryData({ entry, type, model });
+  return result;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  // const apiUrl = `https://dictionaryapi.com/api/v3/references/learners/json/${encodeURIComponent(
+  //   entry
+  // )}?key=${process.env.DICTIONARY_API_KEY_PV}`;
+  // const apiRes = await fetch(apiUrl);
+
+  // if (!apiRes.ok) {
+  //   return { status: apiRes.status, error: "Dictionary API failed!" };
+  // }
+
+  // const apiData = await apiRes.json();
+  // const formatted = await convertToEntrySchemaFormat(apiData, entry, type);
+  
+  // if (!formatted) {
+  //   return { status: 500, error: "Failed to format entry data" };
+  // }
+  // console.log("Entry dictionary data formatted", formatted);
+  
+  // // 4. Generate audio
+  // try {
+  //   formatted.audio = (await generateAudio(entry, type)) || null;
+  // } catch (err) {
+  //   console.error("Failed to generate audio:", err);
+  // }
+  
+  // // 5. Save to DB
+  // try {
+  //   await model.create(formatted);
+  //   console.log("Entry dictionary data formatted after caching", formatted);
+  // } catch (err) {
+  //   console.error("Failed to save entry to the database:", err);
+  // }
+
+  // return { status: 200, data: formatted };
+
+
+
+
+
+// const fetchEntryData = async (entry, type, model) => {
+//   const apiUrl = `https://dictionaryapi.com/api/v3/references/learners/json/${encodeURIComponent(
+//     entry
+//   )}?key=${process.env.DICTIONARY_API_KEY_PV}`;
+//   const apiRes = await fetch(apiUrl);
+
+//   if (!apiRes.ok) {
+//     return { status: apiRes.status, error: "Dictionary API failed!" };
+//   }
+
+//   const apiData = await apiRes.json();
+//   const formatted = await convertToEntrySchemaFormat(apiData, entry, type);
+  
+//   if (!formatted) {
+//     return { status: 500, error: "Failed to format entry data" };
+//   }
+//   console.log("Entry dictionary data formatted", formatted);
+  
+//   // 4. Generate audio
+//   try {
+//     formatted.audio = (await generateAudio(entry, type)) || null;
+//   } catch (err) {
+//     console.error("Failed to generate audio:", err);
+//   }
+  
+//   // 5. Save to DB
+//   try {
+//     await model.create(formatted);
+//     console.log("Entry dictionary data formatted after caching", formatted);
+//   } catch (err) {
+//     console.error("Failed to save entry to the database:", err);
+//   }
+
+//   return { status: 200, data: formatted };
+// }

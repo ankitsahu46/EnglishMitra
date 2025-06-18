@@ -1,9 +1,9 @@
-import { exec } from "child_process";
 import { v2 as cloudinary } from "cloudinary";
 import path from "path";
 import fs from "fs";
 import { promisify } from "util";
 import { convertToCamelCase } from "./convertToCamelCase";
+import { exec } from "child_process";
 
 const execAsync = promisify(exec);
 
