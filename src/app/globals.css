@@ -44,7 +44,6 @@
 }
 
 :root {
-
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.141 0.005 285.823);
@@ -140,7 +139,62 @@
       @apply w-1;
     }
     &::-webkit-scrollbar-thumb {
-     @apply bg-gray-300 rounded-full;
+      @apply bg-gray-300 rounded-full;
     }
+  }
+  .thin-hr-scrollbar {
+    &::-webkit-scrollbar {
+      @apply h-1;
+    }
+    &::-webkit-scrollbar-thumb {
+      @apply bg-gray-300 rounded-full;
+    }
+  }
+  .hidden-scrollbar {
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+  .custom-scroll-bar::-webkit-scrollbar {
+    width: 4px;
+  }
+  .custom-scroll-bar::-webkit-scrollbar-track {
+    background-color: #fff;
+    border-radius: 50px;
+  }
+  .custom-scroll-bar::-webkit-scrollbar-thumb {
+    border-radius: 50px;
+    background-color: #dfdddd;
+    border: 1px solid rgb(229, 235, 231);
+  }
+}
+
+@layer utilities {
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  .animate-fadeIn {
+    animation: fadeIn 1s ease-in-out forwards;
+  }
+
+  @keyframes zoomIn {
+    0% {
+      transform: scale(0.8);
+      opacity: 0;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  .animate-zoomIn {
+    animation: zoomIn 1s ease-in-out 0.1s forwards;
   }
 }

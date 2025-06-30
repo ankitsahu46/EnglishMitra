@@ -1,12 +1,23 @@
 import { PhrasalVerb } from "@/models";
 import { getEntryOfTheDay } from "@/utils";
 
-export async function GET(_request: Request, { params }: { params: { day: string } }) {
+export async function GET(
+  _request: Request,
+  { params }: { params: { day: string } }
+) {
   try {
-    const paramDay = await params;
+    const { day } = await params;
+
+    if (typeof day !== "string" || !day.trim()) {
+      return Response.json(
+        { message: "Validation error: 'day' (string) parameter is required." },
+        { status: 422 }
+      );
+    }
+
     const result = await getEntryOfTheDay({
       type: "phrasalVerb",
-      day: paramDay.day,
+      day,
       listField: "phrasalVerbs",
       defaultValue: "wake up",
       model: PhrasalVerb,
@@ -14,23 +25,28 @@ export async function GET(_request: Request, { params }: { params: { day: string
 
     if (!result || !result.data) {
       const errorMessage = "error" in result ? result.error : "No data found";
-      return Response.json({ message: errorMessage }, { status: result.status });
+      return Response.json(
+        { message: errorMessage },
+        { status: result.status ?? 404 }
+      );
     }
-    return Response.json({ data: result.data }, { status: result.status });
+    return Response.json(
+      { data: result.data },
+      { status: result.status ?? 200 }
+    );
   } catch (error) {
     console.error("Error in GET /api/phrasalVerb-of-the-day/[day]:", error);
     return Response.json(
-      { message: "Internal server error", error: (error as Error).message },
+      {
+        message: "Internal server error",
+        error: error instanceof Error ? error.message : String(error),
+      },
       { status: 500 }
     );
   }
 }
 
-
-export const runtime = "nodejs";
-
-
-
+// export const runtime = "nodejs";
 
 // import connectDB from "@/lib/connectDB";
 // // import { zPhrasalVerbDataSchema } from "@/schema";
@@ -40,8 +56,6 @@ export const runtime = "nodejs";
 //   generateAudio,
 //   convertToEntrySchemaFormat,
 // } from "@/utils";
-
-
 
 // export async function GET(
 //   _request: Request,
@@ -67,13 +81,11 @@ export const runtime = "nodejs";
 //       phrasalVerb = list.phrasalVerbs[validDay] || "wake up";
 //     }
 
-
 //     // 3. Check if the phrasal verb is already cached
 //     const cached = await PhrasalVerb.findOne({ phrasalVerb });
 //     if (cached) {
 //       return Response.json({ data: cached }, { status: 200 });
 //     }
-
 
 //     // 4. Fetch the phrasal verb details from the dictionary API
 //     const res = await fetch(
@@ -109,7 +121,6 @@ export const runtime = "nodejs";
 //     } catch (error) {
 //       console.error("Failed to cache phrasal verb data!", error);
 //     }
-
 
 //     // 9. Return the final phrasal verb data
 //     return Response.json({ data: formatted || {} }, { status: 200 });

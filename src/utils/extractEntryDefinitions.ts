@@ -1,5 +1,5 @@
 import { DefinitionsType, SenseBlock } from "@/types";
-import { extractDefinitionAndExample } from "./extractDefinitionAndExample";
+import { extractDefinitionAndExample } from "@/utils";
 
 export const extractDefinitions = async (
   sseq: SenseBlock[][],
@@ -11,7 +11,7 @@ export const extractDefinitions = async (
   for (const item of sseq) {
     for (const sense of item) {
       const senseData = sense[1];
-      const senseLabel = senseData?.sls ?? null;
+      const senseLabel = senseData?.sls ?? undefined;
       const defObj = await extractDefinitionAndExample(
         senseData?.dt,
         entry,
@@ -22,5 +22,6 @@ export const extractDefinitions = async (
       }
     }
   }
+
   return definitions;
 };

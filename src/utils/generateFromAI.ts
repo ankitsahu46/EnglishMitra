@@ -11,8 +11,8 @@ export const generateFromAI = async (prompt: string) => {
     const response = await cohere.generate({
       model: "command-r-plus",
       prompt,
-      temperature: 0.5,
-      maxTokens: 150,
+      temperature: 0.7,
+      // maxTokens: 150,
     });
 
     const message = response.generations?.[0]?.text.trim();

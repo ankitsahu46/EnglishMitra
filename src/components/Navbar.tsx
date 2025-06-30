@@ -11,7 +11,7 @@ const Navbar = () => {
         <div className=" w-full h-14  flex items-center justify-between">
           <LogoWithName className="bg-white/60 backdrop-blur-lg rounded-lg" />
           <SearchBar />
-          <div className="flex items-center justify-center text-center gap-1 md:gap-4 bg-white/60 backdrop-blur-lg rounded-lg">
+          <div className="flex items-center justify-center text-center gap-1 md:gap-4 bg-white/60 backdrop-blur-lg rounded-lg select-none">
             {[
               ["Home", "/daily-learning"],
               ["Dictionary", "/"],

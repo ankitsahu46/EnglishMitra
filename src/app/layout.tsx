@@ -3,8 +3,15 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import TopLoader from "@/components/TopLoader";
-import { AppProgressBar as ProgressBar } from "next-nprogress-bar";
+import React from "react";
+
+if (process.env.NODE_ENV === "development") {
+  import('@welldone-software/why-did-you-render').then((wdyr) => {
+    wdyr.default(React, {
+      trackAllPureComponents: true,
+    });
+  });
+}
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

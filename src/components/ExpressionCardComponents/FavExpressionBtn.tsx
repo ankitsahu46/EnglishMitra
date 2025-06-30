@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import IconContainer from "./IconContainer";
 import { Heart } from "lucide-react";
 
-const FavWordBtn = () => {
+export const FavExpressionBtn = () => {
   const [isFav, setIsFav] = useState(false);
   const handleFavWordBtn = () => {
     setIsFav((prev: boolean) => !prev);
@@ -18,4 +18,3 @@ const FavWordBtn = () => {
   );
 };
 
-export default FavWordBtn;

@@ -5,11 +5,14 @@ export const getEntryContent = (data: EntryOfTheDayData, type: EntryType) => {
   const firstDefinition = meanings?.definitions?.[0];
 
   return {
-    text: type === "phrasalVerb" ? data.phrasalVerb : data.idiom,
+    text: type === "idiom" ? data.idiom : data.phrasalVerb,
+    phonetic: null,
     audio: data.audio ?? null,
-    partOfSpeech: meanings?.partOfSpeech ?? "N/A",
+    partOfSpeech: meanings?.partOfSpeech ?? null,
     definition: firstDefinition?.definition ?? "N/A",
     example: firstDefinition?.example ?? "N/A",
+    tags: firstDefinition?.tags ?? [],
+    images: firstDefinition?.images ?? [],
     senseLabel: firstDefinition?.senseLabel || null,
   }
 }

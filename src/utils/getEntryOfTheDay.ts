@@ -26,23 +26,29 @@ export async function getEntryOfTheDay({
   const listDoc = await OfTheDayList.findOne();
   const entries: string[] = listDoc?.[listField] || [];
   const entry =
-    entries.length > 0
+    (entries.length > 0
       ? entries[
           validDay > entries.length
             ? Math.floor(Math.random() * entries.length)
             : validDay - 1
         ] || defaultValue
-      : defaultValue;
-
+      : defaultValue).trim().toLowerCase();
+// console.log("entry", entry);
   // 2. Check cache
-  const cached = await model.findOne({ [type]: entry });
-  if (cached) {
-    console.log("cached data showing ",cached);
-    return { status: 200, data: cached };
+  if (model) {
+    const cached = await model.findOne({ [type]: entry });
+    if (cached) {
+      // console.log("cached data showing ",cached);
+      // console.log("showing cached data getEntryOfTheDay", cached.meanings[0].definitions[0]);
+      return { status: 200, data: cached };
+    }
   }
 
   // 3. Fetch from dictionary API
+  // console.log("entry", entry, "type", type, "mdoel", model, "getEntryOfThe Day");
   const result = await fetchEntryData({ entry, type, model });
+  // console.log("result", result, "getEntryOfThe Day");
+  // console.log("apidata result", result);
   return result;
 }
 

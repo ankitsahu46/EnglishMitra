@@ -1,8 +1,10 @@
 export const formatApiTextToHtml = (text: string): string => {
   return text
     .replace(/{bc}/g, ": ")
-    .replace(/{it}/g, "<i>")
-    .replace(/{\/it}/g, "</i>")
+    .replace(/{it}/g, "<i><strong>")
+    .replace(/{\/it}/g, "</strong></i>")
+    .replace(/{phrase}/g, "<i><strong>")
+    .replace(/{\/phrase}/g, "</strong></i>")
     .replace(/{sup}/g, "<sup>")
     .replace(/{\/sup}/g, "</sup>")
     .replace(/{sc}/g, '<span style="font-variant: small-caps">')

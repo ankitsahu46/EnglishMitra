@@ -1,5 +1,5 @@
 
-const OfTheDayComponentSkeleton = () => (
+export const ExpressionCardSkeleton = () => (
   <div className="flex flex-col items-center gap-2 px-8 md:px-12 lg:px-16 animate-pulse">
     {/* Bar Skeleton */}
     <div className="h-6 w-40 bg-gradient-to-r from-gray-200 to-gray-300 rounded mb-2" />
@@ -32,5 +32,3 @@ const OfTheDayComponentSkeleton = () => (
     </div>
   </div>
 );
-
-export default OfTheDayComponentSkeleton;

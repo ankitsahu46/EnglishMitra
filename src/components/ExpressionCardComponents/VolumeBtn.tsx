@@ -11,7 +11,7 @@ const VOLUME_ICONS = [
 ];
 
 
-const VolumeBtn = ({ audioUrl }: { audioUrl: string | null }) => {
+export const VolumeBtn = ({ audioUrl }: { audioUrl: string | null }) => {
   const [iconIndex, setIconIndex] = useState(2);
   const audioRef = useRef<HTMLAudioElement>(null);
   
@@ -32,18 +32,3 @@ const VolumeBtn = ({ audioUrl }: { audioUrl: string | null }) => {
   </>
   );
 };
-
-export default VolumeBtn;
-
-
-
-//client wrapper for VolumeBtn
-
-// "use client";
-// import VolumeBtn from "./VolumeBtn";
-
-// const VolumeBtnClient = ({ audioUrl }: { audioUrl: string | null }) => (
-//   <VolumeBtn audioUrl={audioUrl} />
-// );
-
-// export default VolumeBtnClient;

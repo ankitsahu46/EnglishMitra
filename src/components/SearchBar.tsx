@@ -3,7 +3,7 @@
 
 import { Loader2, Search, X } from "lucide-react";
 import TopLoader from "./TopLoader";
-import { useSearch } from "@/hooks/useSearch";
+import { useSearch } from "@/hooks";
 
 const SearchBar = () => {
   const { query, isPending, handleChange, handleSubmit, clearQuery } = useSearch();

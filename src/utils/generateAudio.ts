@@ -1,8 +1,10 @@
+"use server";
+
 import { v2 as cloudinary } from "cloudinary";
 import path from "path";
 import fs from "fs";
 import { promisify } from "util";
-import { convertToCamelCase } from "./convertToCamelCase";
+import { convertToCamelCase } from "@/utils";
 import { exec } from "child_process";
 
 const execAsync = promisify(exec);

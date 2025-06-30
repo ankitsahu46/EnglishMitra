@@ -1,111 +1,13 @@
-
-
-// //for phrasal verb and idioms;
-
-
-// import { FetchEntryDataOptions } from "@/types";
-// import { convertToEntrySchemaFormat } from "./convertToEntrySchemaFormat";
-// import { generateAudio } from "./generateAudio";
-
-// export const fetchEntryData = async ({
-//   entry,
-//   type,
-//   model,
-// }: FetchEntryDataOptions) => {
-//   //get the entry data from the dictionary API
-
-//   if (!process.env.DICTIONARY_API_KEY_PV) {
-//     console.log("DICTIONARY_API_KEY_PV is not set in environment variables");
-//   }
-//   if (!entry) {
-//     console.log("Entry is required parameter.");
-//   }
-//   // if (!entry || !type || !model) {
-//   //   console.log("Entry, type, and model are required parameters");
-//   // }
-
-//   const apiUrl = `https://dictionaryapi.com/api/v3/references/learners/json/${encodeURIComponent(
-//     entry
-//   )}?key=${process.env.DICTIONARY_API_KEY_PV}`;
-//   const apiRes = await fetch(apiUrl);
-
-//   if (!apiRes.ok) {
-//     return { status: apiRes.status, error: "Dictionary API failed!" };
-//   }
-
-//   const apiData = await apiRes.json();
-//   const formatted = await convertToEntrySchemaFormat(apiData, entry, type);
-
-//   if (!formatted) {
-//     return { status: 500, error: "Failed to format entry data" };
-//   }
-//   console.log("Entry dictionary data formatted", formatted);
-
-//   // 1. Generate audio
-//   if (!formatted.audio) {
-//     try {
-//       formatted.audio = (await generateAudio(entry, type)) || null;
-//     } catch (err) {
-//       console.error("Failed to generate audio:", err);
-//     }
-//   }
-
-//   // 2. Save to DB
-//   try {
-//     await model.create(formatted);
-//     console.log("Entry dictionary data formatted after caching", formatted);
-//   } catch (err) {
-//     console.error("Failed to save entry to the database:", err);
-//   }
-
-//   return { status: 200, data: formatted };
-// };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//for phrasal verb and idioms modified version type and model;
-
-
 import { convertToEntrySchemaFormat } from "./convertToEntrySchemaFormat";
 import { generateAudio } from "./generateAudio";
 import { detectExpressionTypeFromApi } from "./detectExpressionTypeFromApi";
-import { Idiom, PhrasalVerb } from "@/models";
-// import { FetchEntryDataOptions } from "@/types";
+import { Idiom, OfTheDayList, PhrasalVerb } from "@/models";
+import { capitalizeFirstLetter } from "./capitalizeFirstLetter";
 
 interface FetchEntryDataOptions {
   entry: string;
   type?: "phrasalVerb" | "idiom";
-  model?: typeof Idiom | typeof PhrasalVerb;
+  model?: typeof PhrasalVerb | typeof Idiom;
 }
 
 export const fetchEntryData = async ({
@@ -113,150 +15,250 @@ export const fetchEntryData = async ({
   type,
   model,
 }: FetchEntryDataOptions) => {
-  //get the entry data from the dictionary API
-
+  const entryExp = entry.trim().toLowerCase().replace(/\?$/, "");
   if (!process.env.DICTIONARY_API_KEY_PV) {
-    console.log("DICTIONARY_API_KEY_PV is not set in environment variables");
+    return {
+      success: false,
+      data: null,
+      message: "Dictionary API key is not set in environment variables.",
+      error: "Missing API key",
+      status: 500,
+      suggestions: [],
+    };
   }
-  if (!entry) {
-    console.log("Entry is required parameter.");
+  if (!entryExp) {
+    return {
+      success: false,
+      data: null,
+      message: "Entry is a required parameter.",
+      error: "Missing entry parameter",
+      status: 400,
+      suggestions: [],
+    };
   }
 
   const apiUrl = `https://dictionaryapi.com/api/v3/references/learners/json/${encodeURIComponent(
-    entry
+    entryExp
   )}?key=${process.env.DICTIONARY_API_KEY_PV}`;
-  const apiRes = await fetch(apiUrl);
 
-  if (!apiRes.ok) {
-    return { status: apiRes.status, error: "Dictionary API failed!" };
-  }
-
-  const apiData = await apiRes.json();
-
-  // if (!type) type = detectExpressionTypeFromApi(apiData, entry) ;
-  // if (!model) model = type === "phrasalVerb" ? PhrasalVerb : (type === "idiom" && Idiom);
-
-  // let typeName = "phrasalVerb";
-  // if (type === "idiom") {
-  //   typeName = "idiom";
-  // }
-
-  // let detectedType = type;
-  // if (!detectedType) detectedType = detectExpressionTypeFromApi(apiData, entry);
-
-  let detectedType: "phrasalVerb" | "idiom" = "idiom";
-  if (!type) {
-    const tempType = detectExpressionTypeFromApi(apiData, entry);
-    if (tempType === "phrasalVerb") {
-      detectedType = "phrasalVerb";
-    } else if (tempType === "idiom") {
-      detectedType = "idiom";
+  let apiRes;
+  let apiData;
+  try {
+    apiRes = await fetch(apiUrl);
+    if (!apiRes.ok) {
+      return {
+        success: false,
+        data: null,
+        message: "Dictionary API failed!",
+        error: `API status: ${apiRes.status}`,
+        status: apiRes.status,
+        suggestions: [],
+      };
     }
+    apiData = await apiRes.json();
+  } catch (error) {
+    return {
+      success: false,
+      data: null,
+      message: "Failed to fetch from Dictionary API.",
+      error,
+      status: 502,
+      suggestions: [],
+    };
   }
+  // console.log("apiData", apiData);
+  // Handle suggestions (array of strings)
+  if (Array.isArray(apiData) && typeof apiData[0] === "string") {
+    // console.log("apiData2", apiData);
+    if ((type && type === "phrasalVerb") || type === "idiom") {
+      const field = type === "phrasalVerb" ? "phrasalverbs" : "idioms";
+
+      const res = await OfTheDayList.findOneAndUpdate(
+        {},
+        {
+          $pull: {
+            [field]: { $in: [entryExp, capitalizeFirstLetter(entryExp)] },
+          },
+        },
+        { new: true }
+      );
+      console.log("res fetchEntryData", res);
+    }
+    return {
+      success: false,
+      data: null,
+      message: "No data found. Did you mean:",
+      error: "",
+      suggestions: apiData,
+      status: 404,
+    };
+  }
+
+  // Detect type if not provided
+  let detectedType: "phrasalVerb" | "idiom" = "idiom";
+  if (type) {
+    detectedType = type;
+  } else {
+    const tempType = detectExpressionTypeFromApi(apiData, entryExp);
+    if (tempType === "phrasalVerb") detectedType = "phrasalVerb";
+    else if (tempType === "idiom") detectedType = "idiom";
+  }
+
   // Pick model if not provided
   let selectedModel = model;
   if (!selectedModel) {
     if (detectedType === "phrasalVerb") selectedModel = PhrasalVerb;
-    else if (detectedType === "idiom" ) selectedModel = Idiom;
+    else if (detectedType === "idiom") selectedModel = Idiom;
   }
 
-  const formatted = await convertToEntrySchemaFormat(apiData, entry, detectedType);
+  // Format the data
+  const formatted = await convertToEntrySchemaFormat(
+    apiData,
+    entryExp,
+    detectedType
+  );
 
   if (!formatted) {
-    return { status: 500, error: "Failed to format entry data" };
+    return {
+      success: false,
+      data: null,
+      message: "Failed to format entry data.",
+      error: "Formatting error",
+      status: 500,
+      suggestions:
+        Array.isArray(apiData) && typeof apiData[0] === "string" ? apiData : [],
+    };
   }
-  console.log("Entry dictionary data formatted", formatted);
 
-  // 1. Generate audio
+  // Generate audio if missing
   if (!formatted.audio) {
     try {
-      formatted.audio = (await generateAudio(entry, type)) || null;
+      formatted.audio = (await generateAudio(entryExp, detectedType)) || null;
     } catch (err) {
+      // Log but don't fail the whole process
       console.error("Failed to generate audio:", err);
     }
   }
 
-  // 2. Save to DB
+  // Save to DB if model is available
   if (selectedModel) {
     try {
-      console.log(model, formatted, "selectedModel", selectedModel);
-      await selectedModel.create(formatted);
-      console.log("Entry dictionary data formatted after caching", formatted);
+      const existing = await selectedModel.findOne({ $or: [
+        { phrasalVerb: entryExp },
+        { idiom: entryExp },
+      ] });
+      if (!existing) {
+        await selectedModel.create(formatted);
+      }
     } catch (err) {
       console.error("Failed to save entry to the database:", err);
     }
   }
 
-  return { status: 200, data: formatted };
+  return {
+    success: true,
+    data: formatted,
+    message: "Entry fetched and processed successfully.",
+    error: "",
+    status: 200,
+    suggestions: [],
+  };
 };
+// //.
+// //.
+// ///./.
+// //.
+// //.
+// //.
+// //.
+// //.
+// //.
+// //.
+// //.
+// //.
+// //.
+// //.
+// //.
+// //.
+// //.
+// //.
+// //.
+// //.
+// //.
+// //.
+// //.
+//
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// //for phrasal verb and idioms modified version type and model;
 
 // import { convertToEntrySchemaFormat } from "./convertToEntrySchemaFormat";
 // import { generateAudio } from "./generateAudio";
-// import { detectExpressionTypeFromApi } from "./detectExpresssionTypeFromApi";
-// import { Idiom, PhrasalVerb, Word } from "@/models";
-// import convertToWordSchemaFormat from "./convertToWordData";
+// import { detectExpressionTypeFromApi } from "./detectExpressionTypeFromApi";
+// import { Idiom, PhrasalVerb } from "@/models";
 
-
-// type EntryType = "word" | "phrasalVerb" | "idiom";
-// type ModelType = typeof Word | typeof Idiom | typeof PhrasalVerb;
+// interface FetchEntryDataOptions {
+//   entry: string;
+//   type?: "phrasalVerb" | "idiom";
+//   model?: typeof PhrasalVerb | typeof Idiom;
+// }
 
 // export const fetchEntryData = async ({
 //   entry,
-//   model,
 //   type,
-// }: { entry: string, model: ModelType, type: EntryType }) => {
-//   //get the entry data from the dictionary API
-
+//   model,
+// }: FetchEntryDataOptions) => {
 //   if (!process.env.DICTIONARY_API_KEY_PV) {
-//     console.log("DICTIONARY_API_KEY_PV is not set in environment variables");
+//     console.warn("DICTIONARY_API_KEY_PV is not set in environment variables");
 //   }
 //   if (!entry) {
-//     console.log("Entry is required parameter");
+//     console.error("Entry is required parameter.");
 //   }
+// // console.log("entry", entry, "type22", type, "fetchEntryData");
 
 //   const apiUrl = `https://dictionaryapi.com/api/v3/references/learners/json/${encodeURIComponent(
 //     entry
 //   )}?key=${process.env.DICTIONARY_API_KEY_PV}`;
-//   const apiRes = await fetch(apiUrl);
 
-//   if (!apiRes.ok) {
-//     return { status: apiRes.status, error: "Dictionary API failed!" };
+//     const apiRes = await fetch(apiUrl);
+
+//     if (!apiRes?.ok) {
+//       console.log("apiData1");
+//       return { status: apiRes.status, error: "Dictionary API failed!" };
+//     }
+
+//     const apiData = await apiRes.json();
+//     if (Array.isArray(apiData) && typeof apiData[0] === 'string') {
+//       return { success: false, data: apiData, message: "No data found.", status: 404 };
+//     }
+
+//   // const apiData = await apiRes.json();
+
+//   let detectedType: "phrasalVerb" | "idiom" = "idiom";
+//   if (type) {
+//     detectedType = type;
+//   }
+//   else {
+//     // console.log("type", type, "from fetchentrydata");
+//     const tempType = detectExpressionTypeFromApi(apiData, entry);
+//     if (tempType === "phrasalVerb") {
+//       detectedType = "phrasalVerb";
+//     } else if (tempType === "idiom" ) {
+//       detectedType = "idiom";
+//     }
+//   }
+//   // Pick model if not provided
+//   let selectedModel = model;
+//   if (!selectedModel) {
+//     if (detectedType === "phrasalVerb") selectedModel = PhrasalVerb;
+//     else if (detectedType === "idiom" ) selectedModel = Idiom;
 //   }
 
-//   const apiData = await apiRes.json();
-
-//   if (!type) type = detectExpressionTypeFromApi(apiData, entry) ;
-//   if (!model) model = (type === "word") ? Word : (type === "phrasalVerb" ? PhrasalVerb : Idiom);
-
-//   const formatted = type === "word" ? (await convertToWordSchemaFormat(data)) : (await convertToEntrySchemaFormat(apiData, entry, type));
-//   // const formatted = await convertToEntrySchemaFormat(apiData, entry, type);
+//   // console.log("entry", entry, 'detetpe', detectedType, "FetchEntryData");
+//   const formatted = await convertToEntrySchemaFormat(apiData, entry, detectedType);
 
 //   if (!formatted) {
 //     return { status: 500, error: "Failed to format entry data" };
 //   }
-//   console.log("Entry dictionary data formatted", formatted);
 
 //   // 1. Generate audio
 //   if (!formatted.audio) {
@@ -268,103 +270,70 @@ export const fetchEntryData = async ({
 //   }
 
 //   // 2. Save to DB
-//   try {
-//     await model.create(formatted);
-//     console.log("Entry dictionary data formatted after caching", formatted);
-//   } catch (err) {
-//     console.error("Failed to save entry to the database:", err);
+//   if (selectedModel) {
+//     try {
+//       await selectedModel.create(formatted);
+//     } catch (err) {
+//       console.error("Failed to save entry to the database:", err);
+//     }
 //   }
 
 //   return { status: 200, data: formatted };
 // };
 
+// //.
+// //.
+// //.
+// //.
+// ///./.
+// //.
+// //.
+// //.
+// //.
+// //.
+// //.
+// //.
+// //.
+// //.
+// //.
+// //.
+// //.
+// //.
+// //.
+// //.
+// //.
+// //.
+// //.
+// //.
+// //.
+// //.
+// //.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//for phrasal verb and idioms;
-
+// //for phrasal verb and idioms modified version type and model;
 
 // import { convertToEntrySchemaFormat } from "./convertToEntrySchemaFormat";
 // import { generateAudio } from "./generateAudio";
-// import { detectExpressionTypeFromApi } from "./detectExpresssionTypeFromApi";
-// import { Idiom, PhrasalVerb, Word } from "@/models";
+// import { detectExpressionTypeFromApi } from "./detectExpressionTypeFromApi";
+// import { Idiom, PhrasalVerb } from "@/models";
 
-
-// //needs to change, include word type
-// type EntryType = "phrasalVerb" | "idiom";
-// type ModelType = typeof Idiom | typeof PhrasalVerb;
+// interface FetchEntryDataOptions {
+//   entry: string;
+//   type?: "phrasalVerb" | "idiom";
+//   model?: typeof PhrasalVerb | typeof Idiom;
+// }
 
 // export const fetchEntryData = async ({
 //   entry,
-//   model,
 //   type,
-// }: { entry: string, model: ModelType, type: EntryType }) => {
-//   //get the entry data from the dictionary API
-
+//   model,
+// }: FetchEntryDataOptions) => {
 //   if (!process.env.DICTIONARY_API_KEY_PV) {
 //     console.log("DICTIONARY_API_KEY_PV is not set in environment variables");
 //   }
 //   if (!entry) {
-//     console.log("Entry is required parameter");
+//     console.log("Entry is required parameter.");
 //   }
+// console.log("entry", entry, "type22", type, "fetchEntryData");
 
 //   const apiUrl = `https://dictionaryapi.com/api/v3/references/learners/json/${encodeURIComponent(
 //     entry
@@ -377,15 +346,32 @@ export const fetchEntryData = async ({
 
 //   const apiData = await apiRes.json();
 
-//   if (!type) type = detectExpressionTypeFromApi(apiData, entry) ;
-//   if (!model) model = (type === "word") ? Word : (type === "phrasalVerb" ? PhrasalVerb : Idiom);
+//   let detectedType: "phrasalVerb" | "idiom" = "idiom";
+//   if (type) {
+//     detectedType = type;
+//   }
+//   else {
+//     console.log("type", type, "from fetchentrydata");
+//     const tempType = detectExpressionTypeFromApi(apiData, entry);
+//     if (tempType === "phrasalVerb") {
+//       detectedType = "phrasalVerb";
+//     } else if (tempType === "idiom") {
+//       detectedType = "idiom";
+//     }
+//   }
+//   // Pick model if not provided
+//   let selectedModel = model;
+//   if (!selectedModel) {
+//     if (detectedType === "phrasalVerb") selectedModel = PhrasalVerb;
+//     else if (detectedType === "idiom" ) selectedModel = Idiom;
+//   }
 
-//   const formatted = await convertToEntrySchemaFormat(apiData, entry, type);
+//   console.log("entry", entry, 'detetpe', detectedType, "FetchEntryData");
+//   const formatted = await convertToEntrySchemaFormat(apiData, entry, detectedType);
 
 //   if (!formatted) {
 //     return { status: 500, error: "Failed to format entry data" };
 //   }
-//   console.log("Entry dictionary data formatted", formatted);
 
 //   // 1. Generate audio
 //   if (!formatted.audio) {
@@ -397,11 +383,12 @@ export const fetchEntryData = async ({
 //   }
 
 //   // 2. Save to DB
-//   try {
-//     await model.create(formatted);
-//     console.log("Entry dictionary data formatted after caching", formatted);
-//   } catch (err) {
-//     console.error("Failed to save entry to the database:", err);
+//   if (selectedModel) {
+//     try {
+//       await selectedModel.create(formatted);
+//     } catch (err) {
+//       console.error("Failed to save entry to the database:", err);
+//     }
 //   }
 
 //   return { status: 200, data: formatted };

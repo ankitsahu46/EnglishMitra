@@ -21,6 +21,8 @@ export const zWordDataSchema = z.array(
             example: z.string().optional(),
           })
         ),
+        synonyms: z.array(z.string()).optional(),
+        antonyms: z.array(z.string()).optional(),
       })
     ),
   })

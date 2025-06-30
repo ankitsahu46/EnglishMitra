@@ -1,49 +1,48 @@
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import { fetchData } from "@/utils";
-import OfTheDayComponent from "@/components/OfTheDayComponents/OfTheDayCmpt";
+import { ExpressionCard, ExpressionCardSkeleton } from "@/components";
+import React, { Suspense } from "react";
 
+const DAY = 1;
 
-const Page = async () => {
-  const day = 19;
-  const wordOfTheDayData = await fetchData(
-    `${process.env.NEXT_PUBLIC_API_URL}/word-of-the-day/${day}`
+const DAILY_TYPES = [
+  { type: "word", endpoint: "word-of-the-day" },
+  { type: "phrasalVerb", endpoint: "phrasalVerb-of-the-day" },
+  { type: "idiom", endpoint: "idiom-of-the-day" },
+];
+
+const ExpressionCardLoader = async ({
+  type,
+  endpoint,
+  day,
+}: {
+  type: string;
+  endpoint: string;
+  day: number;
+}) => {
+  const data = await fetchData(
+    `${process.env.NEXT_PUBLIC_API_URL}/${endpoint}/${day}`
   );
-  const pVOfTheDayData = await fetchData(
-    `${process.env.NEXT_PUBLIC_API_URL}/phrasalVerb-of-the-day/${day}`
-  );
-  const idiomOfTheDayData = await fetchData(
-    `${process.env.NEXT_PUBLIC_API_URL}/idiom-of-the-day/${day}`
-  );
+  if (!data) return null;
+  return <ExpressionCard data={data} type={type} isOfTheDay={true} />;
+};
+
+const DailyLearningPage = () => {
+  const day = DAY;
 
   return (
     <div>
       <section className="bg-slate-100 py-12">
         <MaxWidthWrapper className="flex flex-col gap-12">
-          {wordOfTheDayData && (
-            <OfTheDayComponent data={wordOfTheDayData} type={"word"} />
-          )}
-          {pVOfTheDayData && (
-            <OfTheDayComponent data={pVOfTheDayData} type={"phrasalVerb"} />
-          )}
-          {idiomOfTheDayData && (
-            <OfTheDayComponent data={idiomOfTheDayData} type={"idiom"} />
-          )}
-
-          {!wordOfTheDayData 
-          && !pVOfTheDayData 
-          && !idiomOfTheDayData && (
-            <div className="text-center text-gray-600">
-              <p className="text-lg font-semibold">
-                {" "}
-                No data available for today.
-              </p>
-              <p className="text-sm">Please check back later.</p>
-            </div>
-          )}
+          {DAILY_TYPES.map(({ type, endpoint }) => (
+            <Suspense key={type} fallback={<ExpressionCardSkeleton />}>
+              <ExpressionCardLoader type={type} endpoint={endpoint} day={day} />
+            </Suspense>
+          ))}
         </MaxWidthWrapper>
       </section>
     </div>
   );
 };
 
-export default Page;
+export default DailyLearningPage;

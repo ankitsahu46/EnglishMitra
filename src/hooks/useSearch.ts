@@ -20,11 +20,11 @@ export const useSearch = () => {
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       const trimmedQuery = query.trim().toLowerCase();
+      const encodedQuery = encodeURIComponent(trimmedQuery);
 
       startTransition(() => {
-        const encodedQuery = encodeURIComponent(trimmedQuery);
         router.push(`/search-expression?query=${encodedQuery}`);
-        // router.refresh(); 
+        router.refresh(); 
       });
     },
     [query, router]

@@ -4,6 +4,8 @@ export const SimpleDefinitionSchema = new Schema(
   {
     definition: { type: String, required: true },
     example: { type: String, default: null },
+    tags: { type: [String], default: [] },
+    images: { type: [String], default: [] },
     senseLabel: { type: [String], default: null },
   },
   { _id: false }
