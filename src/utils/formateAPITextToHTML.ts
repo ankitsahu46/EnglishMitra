@@ -1,4 +1,6 @@
 export const formatApiTextToHtml = (text: string): string => {
+  if (!text) return "";
+
   return text
     .replace(/{bc}/g, ": ")
     .replace(/{it}/g, "<i><strong>")
@@ -8,13 +10,13 @@ export const formatApiTextToHtml = (text: string): string => {
     .replace(/{sup}/g, "<sup>")
     .replace(/{\/sup}/g, "</sup>")
     .replace(/{sc}/g, '<span style="font-variant: small-caps">')
+    .replace(/{\/sc}/g, "</span>")
     .replace(/{ldquo}/g, "&ldquo;")
     .replace(/{rdquo}/g, "&rdquo;")
-    .replace(/{\/sc}/g, "</span>")
-       .replace(
+    .replace(
       /{dx}see {dxt\|([^|}]+)\|[^|}]*\|[^|}]*}{\/dx}/g,
       (_match, p1) =>
-        `<span>see</span>${" "}<a href="/search-expression?query=${encodeURIComponent(
+        `<span>see </span><a href="/search-expression?query=${encodeURIComponent(
           p1.toLowerCase().trim()
         )}"><b>${p1}</b></a>`
     )
@@ -25,4 +27,4 @@ export const formatApiTextToHtml = (text: string): string => {
           p1.toLowerCase().trim()
         )}"><b>${p1}</b></a>`
     );
-}
+};

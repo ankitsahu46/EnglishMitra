@@ -1,10 +1,15 @@
 export const fetchData = async (url: string) => {
+  if (!url) {
+    console.error("No URL provided for fetchData");
+    return null;
+  }
+
   try {
     const res = await fetch(url);
 
     if (!res.ok) {
       const data = await res.json();
-      console.error("Error fetching data:", data.message, "error:", data.error);
+      console.error("Error fetching data from try block:", data);
       return null;
     }
     const json = await res.json();

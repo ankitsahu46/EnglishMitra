@@ -50,16 +50,7 @@ export const useUpdateExpressionImages = ({
         } catch (error) {
           console.error("Error updating expression images in DB:", error);
         }
-        // try {
-        //   await updateExpressionImagesInDB({
-        //     expression,
-        //     sentence,
-        //     type,
-        //     images: imageArr,
-        //   });
-        // } catch (err) {
-        //   console.error("Failed to cache images in DB:", err);
-        // }
+      
       };
       cacheImagesToDB();
     }

@@ -1,9 +1,8 @@
-import MaxWidthWrapper from "@/components/MaxWidthWrapper";
-import { fetchData } from "@/utils";
-import { ExpressionCard, ExpressionCardSkeleton } from "@/components";
+import { fetchData, getDay } from "@/utils";
+import { ExpressionCard, ExpressionCardSkeleton, MaxWidthWrapper } from "@/components";
 import React, { Suspense } from "react";
 
-const DAY = 1;
+const DAY = getDay();
 
 const DAILY_TYPES = [
   { type: "word", endpoint: "word-of-the-day" },

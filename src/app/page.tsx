@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { FaBookOpen, FaMicrophone, FaHeadphones, FaPencilAlt } from 'react-icons/fa';
+import { BookOpen, Headphones, Microphone, PencilAlt } from '@/components/Icons';
 
 const Hero = () => (
   <div className="relative overflow-hidden bg-gradient-to-br from-teal-400 to-green-400 py-24 sm:py-32">
@@ -38,22 +38,22 @@ const FeaturesSection = () => (
       </div>
       <div className="mt-10 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
         <div className="rounded-lg bg-white p-8 shadow-sm">
-          <FaBookOpen className="h-6 w-6 text-teal-500 mb-4" />
+          <BookOpen className="h-6 w-6 text-teal-500 mb-4" />
           <h3 className="text-lg font-semibold text-gray-900">Extensive Vocabulary</h3>
           <p className="mt-2 text-sm text-gray-600">Build your word power with flashcards, lists, and contextual examples.</p>
         </div>
         <div className="rounded-lg bg-white p-8 shadow-sm">
-          <FaPencilAlt className="h-6 w-6 text-green-500 mb-4" />
+          <PencilAlt className="h-6 w-6 text-teal-500 mb-4" />
           <h3 className="text-lg font-semibold text-gray-900">Grammar Mastery</h3>
           <p className="mt-2 text-sm text-gray-600">Understand and practice English grammar rules with interactive exercises.</p>
         </div>
         <div className="rounded-lg bg-white p-8 shadow-sm">
-          <FaHeadphones className="h-6 w-6 text-teal-500 mb-4" />
+          <Headphones className="h-6 w-6 text-teal-500 mb-4" />
           <h3 className="text-lg font-semibold text-gray-900">Listening Comprehension</h3>
           <p className="mt-2 text-sm text-gray-600">Improve your listening skills with diverse audio content and transcripts.</p>
         </div>
         <div className="rounded-lg bg-white p-8 shadow-sm">
-          <FaMicrophone className="h-6 w-6 text-green-500 mb-4" />
+          <Microphone className="h-6 w-6 text-teal-500 mb-4" />
           <h3 className="text-lg font-semibold text-gray-900">Pronunciation Practice</h3>
           <p className="mt-2 text-sm text-gray-600">Enhance your speaking with pronunciation guides and practice tools.</p>
         </div>

@@ -18,7 +18,7 @@
     "espeak-ng": "^1.0.2",
     "lucide-react": "^0.501.0",
     "mongoose": "^8.14.0",
-    "next": "15.3.1",
+    "next": "^15.3.5",
     "next-nprogress-bar": "^2.4.7",
     "nprogress": "^0.2.0",
     "openai": "^4.100.0",

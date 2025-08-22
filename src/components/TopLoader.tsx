@@ -12,30 +12,26 @@ interface TopLoaderProps {
 const TopLoader = ({ loading }: TopLoaderProps) => {
   const pathName = usePathname();
   const searchParams = useSearchParams();
-  const query = searchParams.get("query");
 
   useEffect(() => {
+    let timer: NodeJS.Timeout | null = null;
+
     if (typeof loading === "boolean") {
       if (loading) {
         nprogress.start();
       } else {
-        nprogress.set(0.9);
         nprogress.done();
-      }
-      return () => {
-        nprogress.set(0.9);
-        nprogress.done(); 
-        
       }
     } else {
       nprogress.start();
-      const timer = setTimeout(() => nprogress.done(), 500);
-      return () => {
-        clearTimeout(timer);
-        nprogress.done();
-      };
+      timer = setTimeout(() => nprogress.done(), 500);
     }
-  }, [loading, pathName, query]);
+
+    return () => {
+      if (timer) clearTimeout(timer);
+      nprogress.done();
+    };
+  }, [loading, pathName, searchParams]);
 
   return null;
 };

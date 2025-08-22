@@ -35,33 +35,3 @@ export const searchDtForVis = (
     }
   }
 };
-// export const searchDtForVis = (
-//   dt: DefinitionType[],
-//   currentDefinition: string | null = null
-// ) => {
-//   let lastDefinition = currentDefinition;
-//   for (const d of dt) {
-//     if (d[0] === "text" && typeof d[1] === "string") {
-//       lastDefinition = d[1];
-//     }
-//     if (d[0] === "vis" && Array.isArray(d[1])) {
-//       for (const vis of d[1]) {
-//         if (vis?.t && vis.t.toLowerCase().includes(entry.toLowerCase())) {
-//           if (lastDefinition && vis.t) {
-//             definitionsWithExamples.push({
-//               definition: lastDefinition,
-//               example: vis.t,
-//               senseLabel: senseData.sls,
-//             });
-//           }
-//         }
-//       }
-//     }
-//     // Recursively search in "uns" (usage notes) or other nested arrays
-//     if (d[0] === "uns" && Array.isArray(d[1])) {
-//       for (const unsBlock of d[1]) {
-//         searchDtForVis(unsBlock, lastDefinition);
-//       }
-//     }
-//   }
-// };
