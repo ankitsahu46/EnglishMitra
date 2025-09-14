@@ -1,0 +1,2 @@
+2. create an universal fetchData for GET and POST
+3. fix formatEntryData, add remove expression

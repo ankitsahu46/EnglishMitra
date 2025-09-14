@@ -1,11 +1,11 @@
-import { DefinitionsType, DefinitionType } from "@/types";
+import { Definition, DefinitionType } from "@/types";
 
 export const searchDtForVis = (
   entry: string,
   dt: DefinitionType[],
-  definitionsWithExamples: DefinitionsType[],
+  definitionsWithExamples: Definition[],
   senseLabel: string[] | undefined,
-  currentDefinition: string | null = null,
+  currentDefinition: string | null = null
 ) => {
   let lastDefinition = currentDefinition;
   for (const d of dt) {
@@ -14,13 +14,14 @@ export const searchDtForVis = (
     }
     if (d[0] === "vis" && Array.isArray(d[1])) {
       for (const vis of d[1]) {
-        console.log("vis data from searchForVis", lastDefinition);
         if (vis?.t && vis.t.toLowerCase().includes(entry.toLowerCase())) {
           if (lastDefinition && vis.t) {
             definitionsWithExamples.push({
               definition: lastDefinition,
               example: vis.t,
               senseLabel: senseLabel ?? undefined,
+              tags: [],
+              images: [],
             });
           }
         }
@@ -28,9 +29,14 @@ export const searchDtForVis = (
     }
     // Recursively search in "uns" (usage notes) or other nested arrays
     if (d[0] === "uns" && Array.isArray(d[1])) {
-      console.log("uns data from searchForVis",d[1]);
       for (const unsBlock of d[1]) {
-        searchDtForVis(entry, unsBlock, definitionsWithExamples, senseLabel, lastDefinition);
+        searchDtForVis(
+          entry,
+          unsBlock,
+          definitionsWithExamples,
+          senseLabel,
+          lastDefinition
+        );
       }
     }
   }

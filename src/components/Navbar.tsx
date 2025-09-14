@@ -13,10 +13,10 @@ const Navbar = () => {
           <SearchBar />
           <div className="flex items-center justify-center text-center gap-1 md:gap-4 bg-white/60 backdrop-blur-lg rounded-lg select-none">
             {[
-              ["Home", "/daily-learning"],
-              ["Dictionary", "/"],
-              ["AI tutor", "/"],
-              ["More", "/"],
+              ["Home", "/"],
+              ["Daily", "/daily-learning"],
+              ["Search", "/search-expression"],
+              ["More", "/ankit"],
             ].map(([name, href]) => (
               <Link
                 key={name}

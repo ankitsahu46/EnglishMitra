@@ -1,7 +1,8 @@
-import { capitalizeFirstLetter } from "@/utils";
+// import { capitalizeFirstLetter } from "@/utils";
+import { capitalizeFirstLetter } from "@/utils/capitalizeFirstLetter";
 import Link from "next/link";
 
-export const Pill = ({ link, item }: { link: string, item: string }) => {
+export const Pill = ({ link, item }: { link: string; item: string }) => {
   return (
     <Link
       href={link}

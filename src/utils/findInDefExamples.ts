@@ -1,10 +1,10 @@
-import { DefinitionsType, RawEntryData } from "@/types";
+import { Definition, RawEntryData } from "@/types";
 import { searchDtForVis } from "./searchDtForVis";
 
 export const findInDefExamples = (
   defArr: RawEntryData["def"],
   entry: string,
-  definitionsWithExamples: DefinitionsType[]
+  definitionsWithExamples: Definition[]
 ) => {
   if (!Array.isArray(defArr)) return definitionsWithExamples;
   const normalizedEntry = entry.toLowerCase();

@@ -1,69 +1,66 @@
 "use client";
 
-import { Image as EmptyImage, Loader2 } from "lucide-react";
-import { ContentBlockProps } from "@/types";
-import { useEntryImages } from "@/hooks";
 import Image from "next/image";
-import React from "react";
+import { Image as EmptyImage, Loader2 } from "lucide-react";
+import { useEntryImage } from "@/hooks";
 
-const EntryImageComponent = ({
-  content,
-  type,
+export const EntryImage = ({
+  images,
+  idx,
 }: {
-  content: ContentBlockProps;
-  type: string;
+  images: string[];
+  idx: number;
 }) => {
   const {
-    imageIndex,
-    imageError,
-    isLoading,
-    error,
-    activeImages,
-    handleClick,
+    currentIndex,
+    status,
+    refreshKey,
+    handleImageLoad,
     handleImageError,
-  } = useEntryImages({ content, type });
+    handleRefresh,
+  } = useEntryImage(images);
 
   return (
     <div
-      onClick={handleClick}
-      className="border-b lg:border-t max-sm:rounded-lg rounded-l-lg flex justify-center items-center w-full min-h-[300] lg:max-h-[60vh] lg:aspect-square bg-white relative overflow-hidden lg:col-span-2 shadow-sm self-start"
+      key={refreshKey}
+      onClick={handleRefresh}
+      className="border-b lg:border-t max-sm:rounded-lg rounded-l-lg flex justify-center items-center w-full min-h-[400] md:max-h-[30vh] lg:max-h-[60vh] md:aspect-square bg-white relative overflow-hidden lg:col-span-2 shadow-sm self-start"
+      role="img"
+      aria-label="Image container"
     >
-      {isLoading && !error && (
-        <Loader2 className="absolute animate-spin duration-[100s] stroke-green-400" />
+      {status === "loading" && (
+        <Loader2 className="absolute animate-spin stroke-green-400" />
       )}
-
-      {activeImages.length > 0 && !imageError && activeImages[imageIndex] ? (
+      {images[currentIndex] && (
         <Image
-          src={activeImages[imageIndex]}
-          alt="Word visual example"
-          className={`object-contain h-full aspect-square animate-zoomIn `}
+          src={images[currentIndex]}
+          alt="Loaded content"
           width={500}
           height={300}
+          style={{ width: "auto" }}
+          // className={`object-contain h-full aspect-square animate-zoomIn`}
+          // className={`rounded-2xl object-cover transition-all duration-700 ease-in-out ${
+          className={`object-contain transition-all duration-700 ${
+            status === "success"
+              ? "opacity-100 scale-100"
+              : "opacity-0 scale-75"
+          }`}
+          onLoad={handleImageLoad}
           onError={handleImageError}
+          priority={idx === 0}
         />
-      ) : (
-        !isLoading && (
-          <div>
-            <EmptyImage className="stroke-gray-500/70 w-full" />
-            <p className="text-xs font-semibold text-gray-500/70">
-              {activeImages.length > 1 && imageIndex < activeImages.length - 1
-                ? "Image failed! Click to try next."
-                : "Got Error! Try again"}
-            </p>
-          </div>
-        )
+      )}
+
+      {status === "error" && (
+        <div className="p-5">
+          <EmptyImage className="stroke-gray-500/70 w-full h-8 mb-2 cursor pointer" />
+          <p className="text-xs font-semibold text-gray-500/70">
+            {images.length > 1 && currentIndex < images.length - 1
+              ? "Image failed! Click to try next."
+              : "Got Error! Try again"}
+          </p>
+        </div>
       )}
     </div>
   );
 };
-
-// Memoizing the component
-export const EntryImage = React.memo(
-  EntryImageComponent,
-  (prevProps, nextProps) => {
-    return (
-      prevProps.content.example === nextProps.content.example &&
-      JSON.stringify(prevProps.type) === JSON.stringify(nextProps.type)
-    );
-  }
-);

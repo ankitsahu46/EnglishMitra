@@ -1,6 +1,7 @@
+"use client";
 
 import React, { useState, useTransition, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "nextjs-toploader/app";
 
 export const useSearch = () => {
   const [query, setQuery] = useState("");

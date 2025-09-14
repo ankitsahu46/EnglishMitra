@@ -1,4 +1,5 @@
-import { capitalizeFirstLetter } from "@/utils";
+// import { capitalizeFirstLetter } from "@/utils";
+import { capitalizeFirstLetter } from "@/utils/capitalizeFirstLetter";
 import React from "react";
 
 export const EntryTextBadgeBar = ({ type, isOfTheDay }: { type: string, isOfTheDay: boolean }) => {

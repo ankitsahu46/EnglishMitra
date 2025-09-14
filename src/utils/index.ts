@@ -1,32 +1,62 @@
 import { buildPrompt } from "./buildPrompt";
+import { convertDefinitionsToMeanings } from "./convertDefinitionsToMeanings";
 import { capitalizeFirstLetter } from "./capitalizeFirstLetter";
 import { convertToCamelCase } from "./convertToCamelCase";
-import { convertToEntrySchemaFormat } from "./convertToEntrySchemaFormat";
-import { convertToWordSchemaFormat } from "./convertToWordData";
 import { detectExpressionType } from "./detectExpressionType";
 import { detectExpressionTypeFromApi } from "./detectExpressionTypeFromApi";
-import { enrichDefinitionsWithTagsAndImages } from "./enrichDefinitionsWithTagsAndImages";
 import { extractDefinitionAndExample } from "./extractDefinitionAndExample";
 import { extractDefinitions } from "./extractEntryDefinitions";
 import { fetchData } from "./fetchData";
-import { fetchEntryData } from "./fetchEntryData";
-import { fetchWordData } from "./fetchWordData";
+import { fetchFromAI } from "./fetchFromAI";
+import { fetchImages } from "./fetchImages";
 import { findInDefExamples } from "./findInDefExamples";
 import { findInDros } from "./findInDros";
 import { formatApiTextToHtml } from "./formateAPITextToHTML";
 import { generateAIExample } from "./generateAIExample";
 import { generateAudio } from "./generateAudio";
-import { generateFromAI } from "./generateFromAI";
-import { generateImageArrayFromTagsArray } from "./generateImageArrayFromTagsArray";
-import { generateTags } from "./generateTagsForExampleImage";
+import { generateTagsBulk } from "./generateTagsBulk";
+import { generateTags } from "./generateTags";
 import { getDay } from "./getDay";
-import { getEntryContent } from "./getEntryContent";
-import { getEntryOfTheDay } from "./getEntryOfTheDay";
 import { getUnsplashImageBatch } from "./getUnsplashImageBatch";
-import { getWordContent } from "./getWordContent";
+import { saveExpression } from "./saveExpression";
 import { searchDtForVis } from "./searchDtForVis";
 import { searchUnsplashImage } from "./searchUnsplashImage";
-import { updateExpressionImagesInDB } from "./updateExpressionImagesInDB";
+import { secondsUntilMidnight } from "./secondsUntilMidnight";
 import { validateDayParam } from "./validateDayParams";
+import { convertMeaningsToDefinitions } from "./convertMeaningsToDefinitions";
+import { generateExamplesBulk } from "./generateExamplesBulk";
+import { convertToExpData } from "./convertToExpData";
+import { convertToStandardExpData } from "./convertToStandardExpData";
 
-export { validateDayParam, convertToWordSchemaFormat, generateAudio, convertToCamelCase, convertToEntrySchemaFormat, getWordContent, getEntryContent,fetchData, extractDefinitionAndExample, extractDefinitions,generateAIExample,getEntryOfTheDay, formatApiTextToHtml, fetchEntryData, detectExpressionType, detectExpressionTypeFromApi, fetchWordData, generateFromAI, capitalizeFirstLetter, generateTags, buildPrompt, searchUnsplashImage, enrichDefinitionsWithTagsAndImages, findInDefExamples, findInDros, updateExpressionImagesInDB, searchDtForVis, generateImageArrayFromTagsArray, getDay, getUnsplashImageBatch  };
+export {
+  convertToStandardExpData,
+
+  validateDayParam,
+  convertToExpData,
+  generateAudio,
+  convertToCamelCase,
+  fetchData,
+  extractDefinitionAndExample,
+  extractDefinitions,
+  generateAIExample,
+  formatApiTextToHtml,
+  detectExpressionType,
+  secondsUntilMidnight,
+  saveExpression,
+  detectExpressionTypeFromApi,
+  capitalizeFirstLetter,
+  generateTags,
+  buildPrompt,
+  searchUnsplashImage,
+  findInDefExamples,
+  findInDros,
+  searchDtForVis,
+  getDay,
+  getUnsplashImageBatch,
+  fetchImages,
+  generateTagsBulk,
+  fetchFromAI,
+  convertDefinitionsToMeanings,
+  convertMeaningsToDefinitions,
+  generateExamplesBulk,
+};

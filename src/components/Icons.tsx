@@ -1,5 +1,6 @@
 "use client";
 
+import { ArrowUpRight } from "lucide-react";
 import { FaBookOpen, FaHeadphones, FaMicrophone, FaPencilAlt } from "react-icons/fa";
 
 
@@ -38,3 +39,9 @@ export const Microphone = ({ className }: { className: string }) => {
     <FaMicrophone className={className} />
   );
 };
+
+export const ArrowRightUp = () => {
+  return (
+    <ArrowUpRight />
+  )
+}

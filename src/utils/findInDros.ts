@@ -1,11 +1,11 @@
-import { RawEntryData, DefinitionsType, SenseBlock } from "@/types";
+import { RawEntryData, Definition, SenseBlock } from "@/types";
 import { searchDtForVis } from "./searchDtForVis";
 
 export const findInDros = (
   entryArr: RawEntryData["dros"],
   entry: string
-): DefinitionsType[] => {
-  const definitionsWithExamples: DefinitionsType[] = [];
+): Definition[] => {
+  const definitionsWithExamples: Definition[] = [];
 
   if (!entryArr) return definitionsWithExamples;
 

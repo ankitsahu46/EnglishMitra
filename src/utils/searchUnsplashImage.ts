@@ -21,6 +21,7 @@ export const searchUnsplashImage = async (query: string) => {
       ? data.results
           .map((res: UnsplashImage) => res.urls?.regular)
           .filter(Boolean)
+          .slice(0, 3)
       : [];
 
     return images.length > 0 ? images : [];

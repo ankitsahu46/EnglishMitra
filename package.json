@@ -9,21 +9,22 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@google/genai": "^1.17.0",
+    "@huggingface/inference": "^4.7.1",
     "@radix-ui/react-slot": "^1.2.0",
-    "@welldone-software/why-did-you-render": "^10.0.1",
     "class-variance-authority": "^0.7.1",
     "cloudinary": "^2.6.1",
     "clsx": "^2.1.1",
     "cohere-ai": "^7.17.1",
     "espeak-ng": "^1.0.2",
+    "framer-motion": "^12.23.12",
     "lucide-react": "^0.501.0",
     "mongoose": "^8.14.0",
     "next": "^15.3.5",
-    "next-nprogress-bar": "^2.4.7",
-    "nprogress": "^0.2.0",
+    "nextjs-toploader": "^3.8.16",
     "openai": "^4.100.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
     "react-icons": "^5.5.0",
     "swr": "^2.3.3",
     "tailwind-merge": "^3.2.0",
@@ -41,5 +42,9 @@
     "eslint-config-next": "15.3.1",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
   }
 }

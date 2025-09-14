@@ -4,14 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import React from "react";
-
-if (process.env.NODE_ENV === "development") {
-  import('@welldone-software/why-did-you-render').then((wdyr) => {
-    wdyr.default(React, {
-      trackAllPureComponents: true,
-    });
-  });
-}
+import NextTopLoader from "nextjs-toploader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,17 +31,14 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
       >
-        {/* <TopLoader /> */}
-         {/* <ProgressBar
-        height="4px"
-        color="#fffd00"
-        options={{ showSpinner: false }}
-        shallowRouting
-      /> */}
+        <NextTopLoader
+          showSpinner={false}
+          speed={100}
+          color="#05df72"
+          shadow="0 0 2px #2299DD,0 0 1px #2299DD"
+        />
         <Navbar />
-        <div className="flex-1 flex flex-col"> 
-        {children}
-        </div>
+        <div className="flex-1 flex flex-col">{children}</div>
         <Footer />
       </body>
     </html>

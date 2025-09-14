@@ -1,6 +1,6 @@
 export function getDay() {
   const today = new Date();
-  const targetDate = new Date("2025-07-01");
+  const targetDate = new Date("2025-06-30");
 
   const diffMs = today.getTime() - targetDate.getTime();
 

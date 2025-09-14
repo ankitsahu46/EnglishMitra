@@ -1,47 +1,39 @@
-import { fetchData, getDay } from "@/utils";
-import { ExpressionCard, ExpressionCardSkeleton, MaxWidthWrapper } from "@/components";
-import React, { Suspense } from "react";
+"use client";
 
-const DAY = getDay();
+import {
+  MaxWidthWrapper,
+  ExpressionCardSkeleton,
+  OfTheDayErrorMessage,
+  AllExpressionsContainer,
+} from "@/components";
+import { useDailyLearning } from "@/hooks";
+import { ExpressionType } from "@/types";
+import { memo } from "react";
 
-const DAILY_TYPES = [
-  { type: "word", endpoint: "word-of-the-day" },
-  { type: "phrasalVerb", endpoint: "phrasalVerb-of-the-day" },
-  { type: "idiom", endpoint: "idiom-of-the-day" },
-];
-
-const ExpressionCardLoader = async ({
-  type,
-  endpoint,
-  day,
-}: {
-  type: string;
-  endpoint: string;
-  day: number;
-}) => {
-  const data = await fetchData(
-    `${process.env.NEXT_PUBLIC_API_URL}/${endpoint}/${day}`
-  );
-  if (!data) return null;
-  return <ExpressionCard data={data} type={type} isOfTheDay={true} />;
-};
-
-const DailyLearningPage = () => {
-  const day = DAY;
+const DailyLearningClient = () => {
+  const { results } = useDailyLearning();
 
   return (
-    <div>
-      <section className="bg-slate-100 py-12">
-        <MaxWidthWrapper className="flex flex-col gap-12">
-          {DAILY_TYPES.map(({ type, endpoint }) => (
-            <Suspense key={type} fallback={<ExpressionCardSkeleton />}>
-              <ExpressionCardLoader type={type} endpoint={endpoint} day={day} />
-            </Suspense>
-          ))}
-        </MaxWidthWrapper>
-      </section>
-    </div>
+    <section className="bg-slate-100 py-12">
+      <MaxWidthWrapper className="flex flex-col gap-12">
+        {results.map(({ type, data, isLoading, error }) => {
+          if (isLoading) return <ExpressionCardSkeleton key={type} />;
+          if (error) return <OfTheDayErrorMessage key={type} type={type} />;
+          if (data) {
+            return (
+              <AllExpressionsContainer
+                key={type}
+                data={data.data}
+                type={type as ExpressionType}
+                isOfTheDay
+              />
+            );
+          }
+          return null;
+        })}
+      </MaxWidthWrapper>
+    </section>
   );
 };
 
-export default DailyLearningPage;
+export default memo(DailyLearningClient);

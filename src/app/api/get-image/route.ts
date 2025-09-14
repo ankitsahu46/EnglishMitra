@@ -7,19 +7,25 @@ export const POST = async (req: NextRequest) => {
 
     if (typeof sentence !== "string" || !sentence.trim()) {
       return Response.json(
-        { error: "Validation error: 'sentence' (string) is required." },
+        {
+          tags: [],
+          images: [],
+          error: "Validation error: 'sentence' (string) is required.",
+        },
         { status: 422 }
       );
     }
+
     let tags: string[] =
       Array.isArray(inputTags) && inputTags.length > 0 ? inputTags : [];
 
     if (tags.length === 0) {
       tags = await generateTags(sentence);
-
       if (!Array.isArray(tags) || tags.length === 0) {
         return Response.json(
           {
+            tags: [],
+            images: [],
             error:
               "Something went wrong while generating tags for the provided example.",
           },
@@ -32,17 +38,27 @@ export const POST = async (req: NextRequest) => {
     const images = await searchUnsplashImage(query);
 
     if (!Array.isArray(images) || images.length === 0) {
-      console.error("Images not found.");
+      console.error("Images cannot be searched from Unsplash");
       return Response.json(
-        { error: `Images cannot be searched` },
+        {
+          tags,
+          images: [],
+          error: `Images cannot be searched`,
+        },
         { status: 404 }
       );
     }
+
     return Response.json({ images, tags }, { status: 200 });
   } catch (error) {
-    console.error("Internal Sever Error", error);
+    console.error(
+      "Internal Sever Error, Couldn't generate images api/get-image",
+      error
+    );
     return Response.json(
       {
+        tags: [],
+        images: [],
         error: `internal Server Error, ${
           error instanceof Error ? error.message : String(error)
         }`,

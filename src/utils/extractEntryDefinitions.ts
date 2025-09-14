@@ -1,12 +1,12 @@
-import { DefinitionsType, SenseBlock } from "@/types";
+import { Definition, SenseBlock } from "@/types";
 import { extractDefinitionAndExample } from "@/utils";
 
 export const extractDefinitions = async (
   sseq: SenseBlock[][],
   entry: string,
   partOfSpeech: string | null
-): Promise<DefinitionsType[]> => {
-  const definitions: DefinitionsType[] = [];
+): Promise<Definition[]> => {
+  const definitions: Definition[] = [];
 
   for (const item of sseq) {
     for (const sense of item) {

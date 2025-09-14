@@ -1,5 +1,3 @@
-import { Idiom, PhrasalVerb } from "@/models";
-
 // ===================
 // UI Props Interfaces
 // ===================
@@ -10,34 +8,38 @@ export interface GoBackBtnProps {
 }
 
 export interface OfTheDayComponentProps {
-  data: WordOfTheDayData | EntryOfTheDayData;
-  type: string;
+  data: StandardExpData;
+  type: ExpressionType;
   isOfTheDay?: boolean;
 }
 
 export interface ContentBlockProps {
-  text: string | undefined;
+  text: string;
   phonetic: string | null;
-  partOfSpeech: string | null;
   audio: string | null;
+  partOfSpeech: string | null;
   definition: string;
   example: string;
+  tags: string[];
+  images: string[];
   senseLabel?: string[] | null;
-  tags?: string[];
-  images?: string[];
-  synonyms?: string[];
-  antonyms?: string[];
+  groupedSynonyms: Record<string, string[]> | null | undefined;
+  groupedAntonyms: Record<string, string[]> | null | undefined;
+  synonyms?: string[] | null;
+  antonyms?: string[] | null;
 }
 
 // ===================
 // Word Data Interfaces
 // ===================
-export interface WordOfTheDayData {
+export interface WordData {
   _id?: string;
   word: string;
   phonetic: string | null;
   audio: string | null;
   meanings: Meaning[];
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface Meaning {
@@ -45,41 +47,40 @@ export interface Meaning {
   definitions: Definition[];
   synonyms?: string[] | null;
   antonyms?: string[] | null;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface Definition {
   definition: string;
   example: string | null;
-  tags?: string[] | null;
-  images?: string[] | null;
+  tags: string[];
+  images: string[];
+  senseLabel?: string[] | null;
   synonyms?: string[] | null;
   antonyms?: string[] | null;
 }
 
+export interface SaveExpressionOptions {
+  type: ExpressionType;
+  expression: string;
+  formattedData: StandardExpData;
+}
 // ===================
 // Entry Data Interfaces
 // ===================
-export interface EntryOfTheDayData {
+export interface EntryData {
   _id?: string;
   phrasalVerb?: string;
   idiom?: string;
   audio: string | null;
-  meanings: EntryMeaningsType[];
+  meanings: Meaning[];
 }
 
-export interface EntryMeaningsType {
-  partOfSpeech: string | null;
-  definitions: DefinitionsType[];
+export interface ExpressionCardLoaderProps {
+  type: ExpressionType;
+  data: ExpressionData | null;
 }
-
-export type DefinitionsType = {
-  definition: string;
-  example: string | null;
-  tags?: string[] | null;
-  images?: string[] | null;
-  senseLabel?: string[] | null;
-};
-
 // ===================
 // Raw Data Interfaces
 // ===================
@@ -107,20 +108,6 @@ export interface RawWordData {
   phonetic?: string;
   phonetics?: RawPhonetic[];
   meanings: RawMeaning[];
-}
-
-export interface WordSchemaFormat {
-  word: string;
-  phonetic: string | null;
-  audio: string | null;
-  meanings: Meaning[];
-}
-
-export interface EntrySchemaFormat {
-  phrasalVerb?: string;
-  idiom?: string;
-  audio: string | null;
-  meanings: EntryMeaningsType[];
 }
 
 export interface RawEntryData {
@@ -220,7 +207,29 @@ export type UsageNote = DefinitionType[];
 // Entry/Model Types
 // ===================
 export type EntryType = "phrasalVerb" | "idiom";
-export type ModelType = typeof Idiom | typeof PhrasalVerb;
+export type ExpressionType = "word" | "phrasalVerb" | "idiom";
+export type ExpressionData = WordData | EntryData;
+export type fieldType = "words" | "idioms" | "phrasalVerbs";
+
+export interface FetchEntryDataOptions {
+  entry: string;
+  type?: EntryType;
+}
+
+export interface FetchEntryResponse {
+  success: boolean;
+  data: StandardExpData | null;
+  message: string;
+  error: string | Error | null;
+  status: number;
+  suggestions: string[];
+}
+export interface getExpOfTheDayDataOpt {
+  type: ExpressionType;
+  day: string;
+  listField: fieldType;
+  defaultValue: string;
+}
 
 export interface EntryContent {
   text: string;
@@ -234,30 +243,65 @@ export interface EntryContent {
   // synonyms?: string[];
   // antonyms?: string[];
 }
-export interface getEntryContentProps {
-  commonData: {
-    text: string;
-    phonetic: string | null;
-    audio: string | null;
-  };
-  definitions: {
+
+export interface EnrichDefinitionsResult {
+  enriched: StandardExpData;
+  foundNewData: boolean;
+}
+export interface StandardExpData {
+  commonData: ExpressionCommonData;
+  definitions: ExpressionDefinitions[];
+}
+
+export interface ExpressionCommonData {
+  text: string;
+  phonetic: string | null;
+  audio: string | null;
+  synonyms?: Record<string, string[]> | null;
+  antonyms?:  Record<string, string[]> | null;
+}
+
+export interface ExpressionDefinitions {
+  partOfSpeech: string | null;
+  definition: string;
+  example: string;
+  tags: string[];
+  images: string[];
+  senseLabel?: string[] | null;
+  synonyms?: string[] | null;
+  antonyms?: string[] | null;
+}
+export interface ApiResponse<T> {
+  success: boolean;
+  data: T | null;
+  error?: string | null;
+  message?: string;
+  status?: number;
+  suggestions?: RawEntryData[] | string[];
+}
+
+export interface ExpressionCardProps {
+  def: ExpressionDefinitions;
+  commonData: ExpressionCommonData;
+  idx: number;
+}
+
+export interface UpdateDoc {
+  phonetic?: string | null;
+  audio?: string | null;
+  meanings: Array<{
     partOfSpeech: string | null;
-    definition: string;
-    example: string;
-    tags?: string[] | null;
-    images?: string[] | null;
-    senseLabel?: string[] | null;
-    synonyms?: string[] | null;
-    antonyms?: string[] | null;
-  }[];
+    definitions: Array<{
+      definition: string;
+      example: string;
+      tags: string[];
+      images: string[];
+      senseLabel?: string[] | string | null;
+    }>;
+    synonyms?: string[];
+    antonyms?: string[];
+  }>;
 }
-
-export interface FetchEntryDataOptions {
-  entry: string;
-  type: EntryType;
-  model: ModelType;
-}
-
 // ===================
 // External API Types
 // ===================
@@ -271,12 +315,6 @@ export interface UnsplashImage {
     thumb: string;
     small_s3?: string;
   };
-}
-
-export interface useGetUnsplashImagesProps {
-  sentence: string;
-  tags?: string[];
-  shouldFetch: boolean;
 }
 
 export interface EntryImageComponentProps {
@@ -293,7 +331,7 @@ export interface updateExpressionImagesInDBProps {
 }
 
 export interface defExampleArr {
-  def: DefinitionsType;
+  def: Definition;
   idx: number;
   mIdx: number;
 }

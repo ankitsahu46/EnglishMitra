@@ -10,6 +10,8 @@ import { VolumeBtn } from "./ExpressionCardComponents/VolumeBtn";
 import { SearchErrorMessage } from "./SearchErrorMessage";
 import { Pill } from "./Pill";
 import TryAgainBtn from "./ExpressionCardComponents/TryAgainBtn";
+import { AllExpressionsContainer } from "./ExpressionCardComponents/AllExpressionsContainer";
+import { OfTheDayErrorMessage } from "./ExpressionCardComponents/OfTheDayErrorMessage";
 
 export {
   SearchErrorMessage,
@@ -23,6 +25,8 @@ export {
   ContentBlock,
   EntryTextBadgeBar,
   Pill,
-  TryAgainBtn
+  TryAgainBtn,
+  AllExpressionsContainer,
+  OfTheDayErrorMessage,
 
 };

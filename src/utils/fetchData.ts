@@ -9,14 +9,14 @@ export const fetchData = async (url: string) => {
 
     if (!res.ok) {
       const data = await res.json();
-      console.error("Error fetching data from try block:", data);
+      console.log("Error fetching data fetchData.ts", data);
       return null;
     }
     const json = await res.json();
     return json?.data ?? null;
   }
-  catch {
-    console.error("Error fetching data:", url);
+  catch (error){
+    console.error("Error fetching data:", error);
     return null;
   }
 }

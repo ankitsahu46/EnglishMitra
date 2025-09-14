@@ -1,6 +1,13 @@
-import { useEntryImages } from "./useEntryImages";
-import { useGetUnsplashImages } from "./useGetUnsplashImages";
+import { useDailyLearning } from "./useDailyLearning";
+import { useEnrichedContent } from "./useEnrichedContent";
+import { useEntryImage } from "./useEntryImage";
+import { useSaveExpression } from "./useSaveExpression";
 import { useSearch } from "./useSearch";
-import { useUpdateExpressionImages } from "./useUpdateExpressionImages";
 
-export { useGetUnsplashImages, useSearch, useEntryImages, useUpdateExpressionImages,  };
+export {
+  useSearch,
+  useEnrichedContent,
+  useEntryImage,
+  useDailyLearning,
+  useSaveExpression,
+};

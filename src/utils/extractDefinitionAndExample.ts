@@ -1,11 +1,11 @@
-import { DefinitionsType, DefinitionType } from "@/types";
+import { Definition, DefinitionType } from "@/types";
 import { generateAIExample, buildPrompt } from "@/utils";
 
 export const extractDefinitionAndExample = async (
   dt: DefinitionType[] | undefined,
   expression: string,
   partOfSpeech: string | null
-): Promise<DefinitionsType | null> => {
+): Promise<Definition | null> => {
   if (!dt) return null;
 
   const defEntry = dt?.find((entry) => entry[0] === "text");
@@ -25,5 +25,5 @@ export const extractDefinitionAndExample = async (
       buildPrompt(expression, definition, partOfSpeech)
     ));
 
-  return { definition, example: finalExample };
+  return { definition, example: finalExample , tags: [], images: [] };
 };

@@ -9,6 +9,7 @@
     "shortdef",
     "sphrasev",
     "sseq",
-    "subphrase"
+    "subphrase",
+    "toploader"
   ]
 }

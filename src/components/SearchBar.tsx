@@ -1,16 +1,15 @@
-
 "use client";
 
 import { Loader2, Search, X } from "lucide-react";
-import TopLoader from "./TopLoader";
 import { useSearch } from "@/hooks";
 
 const SearchBar = () => {
-  const { query, isPending, handleChange, handleSubmit, clearQuery } = useSearch();
+  const { query, isPending, handleChange, handleSubmit, clearQuery } =
+    useSearch();
 
   return (
     <>
-      <TopLoader loading={isPending} />
+      {/* <TopLoader loading={isPending} /> */}
       <form
         onSubmit={handleSubmit}
         className="relative text-gray-600"
@@ -60,4 +59,3 @@ const SearchBar = () => {
 };
 
 export default SearchBar;
-

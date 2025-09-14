@@ -1,18 +1,19 @@
 import React, { Suspense } from "react";
-import { ArrowUpRight } from "lucide-react";
 import {
-  ExpressionCard,
+  AllExpressionsContainer,
   ExpressionCardSkeleton,
   MaxWidthWrapper,
   SearchErrorMessage,
 } from "@/components";
+import Link from "next/link";
+import { ArrowRightUp } from "@/components/Icons";
 
 interface SearchExpressionProps {
   searchParams: { query?: string };
 }
 
 const SearchExpression = async ({ searchParams }: SearchExpressionProps) => {
-  const query = (await searchParams).query;
+  const query = (await searchParams)?.query;
   const defaultQueryHref = `/search-expression?query=${encodeURIComponent(
     "welcome".toLowerCase().trim()
   )}`;
@@ -28,13 +29,13 @@ const SearchExpression = async ({ searchParams }: SearchExpressionProps) => {
                 <div className="flex gap-1">
                   <span>Try</span>
                   <span>
-                    <a
+                    <Link
                       href={defaultQueryHref}
                       className="flex font-bold italic ml-1"
                     >
                       welcome
-                      <ArrowUpRight />
-                    </a>
+                      <ArrowRightUp />
+                    </Link>
                   </span>
                 </div>
               </div>
@@ -42,7 +43,7 @@ const SearchExpression = async ({ searchParams }: SearchExpressionProps) => {
           )}
           {query && (
             <Suspense fallback={<ExpressionCardSkeleton />}>
-              <SearchResultSection query={query} />
+              <SearchResultSection key={query} query={query} />
             </Suspense>
           )}
         </MaxWidthWrapper>
@@ -50,8 +51,45 @@ const SearchExpression = async ({ searchParams }: SearchExpressionProps) => {
     </div>
   );
 };
-
 export default SearchExpression;
+//.
+//.
+//.
+//.
+//.
+//.
+//.
+//.
+//.
+//.
+//.
+//.
+//.
+const SearchResultSection = async ({ query }: { query: string }) => {
+  try {
+    const result = await fetchExpressionByQuery(query);
+    if (
+      Array.isArray(result.suggestions) &&
+      typeof result.suggestions[0] === "string"
+    ) {
+      return (
+        <SearchErrorMessage
+          message={"Couldn't find the data."}
+          query={query}
+          suggestions={result.suggestions}
+        />
+      );
+    }
+    if (!result || !result.data) {
+      throw new Error("No data found");
+    }
+    return <AllExpressionsContainer data={result.data} type={result.type} />;
+  } catch (err) {
+    console.log("No expression data Found, search-expression.tsx", err);
+    return <SearchErrorMessage message={"Something went wrong. Please try again"} query={query} />;
+  }
+};
+
 //.
 //.
 //.
@@ -75,46 +113,13 @@ const fetchExpressionByQuery = async (query: string) => {
   );
   if (!res.ok) {
     const data = await res.json();
-    if (Array.isArray(data.suggestions) && typeof data.suggestions[0] === "string") {
+    if (
+      Array.isArray(data.suggestions) &&
+      typeof data.suggestions[0] === "string"
+    ) {
       return data;
     }
     throw new Error("No Data Found");
   }
   return res.json();
-};
-
-//.
-//.
-//.
-//.
-//.
-//.
-//.
-//.
-//.
-//.
-//.
-//.
-//.
-
-const SearchResultSection = async ({ query }: { query: string }) => {
-  try {
-    const data = await fetchExpressionByQuery(query);
-    if (Array.isArray(data.suggestions) && typeof data.suggestions[0] === "string") {
-      return (
-        <SearchErrorMessage
-          message={"Couldn't find the data."}
-          query={query}
-          suggestions={data.suggestions}
-        />
-      );
-    }
-    if (!data || !data.data) {
-      throw new Error("No data found");
-    }
-    return <ExpressionCard data={data.data} type={data.type} />;
-  } catch (err) {
-    console.log("No result Found", err);
-    return <SearchErrorMessage message={"No result Found"} query={query} />;
-  }
 };
